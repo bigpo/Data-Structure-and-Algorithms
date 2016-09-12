@@ -13,7 +13,7 @@ bool IsEmpty(ListNode* pHead) {
 
 //判断节点pNode是否是最后一个节点
 bool IsLast(ListNode* pHead, ListNode* pNode) {
-	
+
 	return pNode->next == NULL;
 }
 
@@ -38,7 +38,7 @@ ListNode* FindPrevious(ListNode *pHead, int x) {
 	return pNode; //查找失败，则返回NULL
 }
 
-//删除某一元素
+//删除某一元素(按元素删除)
 void Delete(ListNode* pHead, int x) {
 	if (pHead == NULL)
 		return;
@@ -46,7 +46,7 @@ void Delete(ListNode* pHead, int x) {
 	ListNode* tempNode;
 
 	pNode = FindPrevious(pHead, x); //找到待删除节点的前一个节点
-	//（最后一个节点的情况不存在，因为这就意味着x在最后一个节点上的下一个节点上）
+									//（最后一个节点的情况不存在，因为这就意味着x在最后一个节点上的下一个节点上）
 	if (!IsLast(pHead, pNode)) { //如果pNode不是最后一个节点
 		tempNode = pNode->next; //备份待删除节点
 		pNode->next = tempNode->next;
@@ -55,9 +55,45 @@ void Delete(ListNode* pHead, int x) {
 	return;
 }
 
+//删除某一节点(按节点删除)
+//当删除的节点不是尾节点时，效率可达O(1)
+
+void Delete(ListNode* pHead, ListNode* tobeDelete) {
+	if (pHead == NULL || tobeDelete == NULL)
+		return;
+	if (tobeDelete->next != NULL) {//不是尾节点的情况
+		ListNode* tempNode = tobeDelete->next;
+		tobeDelete->value = tobeDelete->next->value;
+		tobeDelete->next = tobeDelete->next->next;
+		delete tempNode;
+		tempNode = NULL;
+	}
+	else if (pHead->next == tobeDelete) { //第一个节点即是尾节点的情况
+		pHead->next = NULL;
+		delete tobeDelete;
+		tobeDelete = NULL;
+		
+	}
+	else {
+//		ListNode* pLastNodePre = FindPrevious(pHead, tobeDelete->value);
+//      只有当链表中不含有重复元素时可用
+
+		ListNode* pLastNodePre = pHead;
+		while (pLastNodePre->next != tobeDelete)
+			pLastNodePre = pLastNodePre->next;
+
+		pLastNodePre->next = NULL;
+		delete tobeDelete;
+		tobeDelete = NULL;
+
+
+	}
+
+}
+
 //在链表尾部加入一个节点
 void AddToTail(ListNode* pHead, int value) {
-	
+
 	ListNode* pNew = new ListNode();
 	pNew->value = value;
 	pNew->next = NULL;
@@ -104,7 +140,7 @@ void DeleteList(ListNode* pHead) {
 	ListNode* pNode = pHead->next;
 	pHead->next = NULL;
 	ListNode* tempNode = NULL;
-	
+
 	while (pNode != NULL) {
 		tempNode = pNode->next;
 		delete pNode;
